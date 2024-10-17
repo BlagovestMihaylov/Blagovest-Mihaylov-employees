@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeTimeOverlapCalculator
@@ -26,7 +27,35 @@ public class EmployeeTimeOverlapCalculator
         }
     }
 
-    public List<TimeWorked> getTimeWorkedSortedByDuration(List<CSVRow> rows)
+    public Optional<TimeWorked> calculateTheMostTimeWorkedTogetherOverall(List<CSVRow> rows)
+    {
+        List<TimeWorked> timeWorkedList = calculateTimeWorkedTogether(rows);
+
+        if (timeWorkedList.isEmpty()) return Optional.empty();
+
+        return timeWorkedList.stream()
+                             .collect(Collectors.toMap(
+                                     timeWorked -> createPairKey(
+                                             timeWorked.firstEmployeeId(),
+                                             timeWorked.secondEmployeeId()),
+                                     timeWorked -> timeWorked,
+                                     (tw1, tw2) -> new TimeWorked(
+                                             tw1.firstEmployeeId(),
+                                             tw1.secondEmployeeId(),
+                                             null, // dont matter
+                                             null, // dont matter
+                                             null, // dont matter
+                                             tw1.daysWorkedTogether() + tw2.daysWorkedTogether()
+                                     )
+                             ))
+                             .values()
+                             .stream()
+                             .max(Comparator.comparingLong(TimeWorked::daysWorkedTogether));
+
+
+    }
+
+    public List<TimeWorked> calculateTheMostTimeWorkedTogetherOnOneProject(List<CSVRow> rows)
     {
         List<TimeWorked> timeWorkedList = calculateTimeWorkedTogether(rows);
         timeWorkedList.sort(Comparator.comparingLong(TimeWorked::daysWorkedTogether)
