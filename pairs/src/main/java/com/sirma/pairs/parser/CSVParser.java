@@ -37,8 +37,8 @@ public class CSVParser
     public CSVRow parseCSVRow(String[] values)
     {
         return new CSVRow(
-                Integer.parseInt(values[0]),
-                Integer.parseInt(values[1]),
+                Long.parseLong(values[0]),
+                Long.parseLong(values[1]),
                 parseDate(values[2]),
                 parseDate(values[3])
         );

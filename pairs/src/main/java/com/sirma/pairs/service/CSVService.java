@@ -4,6 +4,7 @@ import com.sirma.pairs.parser.CSVRow;
 import com.sirma.pairs.reader.CSVReader;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -30,13 +32,20 @@ public class CSVService
         this.reader = reader;
     }
 
+    public List<TimeWorked> getTopPairDetails(MultipartFile file)
+    {
+        final List<CSVRow> rows = reader.readFile(file);
+
+        final List<TimeWorked> results = employeeTimeOverlapCalculator.getTimeWorkedSortedByDuration(rows);
+
+        return filterTopPairCommonProjects(results);
+    }
+
 
     @PostConstruct
     public void readFromDevice()
     {
-
         final List<String> filenames = getFileNames();
-
 
         for (String fn : filenames)
         {
@@ -44,12 +53,9 @@ public class CSVService
 
             final List<TimeWorked> results = employeeTimeOverlapCalculator.getTimeWorkedSortedByDuration(rows);
 
-            printResults(results, fn);
+            PrintUtils.printResults(results, fn);
         }
-
-
     }
-
 
     private List<String> getFileNames()
     {
@@ -68,54 +74,32 @@ public class CSVService
         return new ArrayList<>();
     }
 
-
-    private void printResults(List<TimeWorked> results, String filename)
+    private List<TimeWorked> filterTopPairCommonProjects(List<TimeWorked> results)
     {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        System.out.printf("%n=== Results for File: %s ===%n%n", filename);
-
         final Optional<TimeWorked> topPairOpt = results.stream()
                                                        .findFirst();
 
         if (topPairOpt.isEmpty())
         {
-            System.out.println("No employee pairs found.");
-            return;
+            return new ArrayList<>();
         }
 
-        final TimeWorked topPair = topPairOpt.get();
+        final Long id1 = topPairOpt.get()
+                                      .firstEmployeeId();
+        final Long id2 = topPairOpt.get()
+                                      .secondEmployeeId();
 
-        System.out.println(">>> Pair That Worked Together the Most:");
-        System.out.printf("Employee %d worked with employee %d on project %d from %s to %s for %d %s.%n%n",
-                          topPair.firstEmployeeId(),
-                          topPair.secondEmployeeId(),
-                          topPair.projectId(),
-                          topPair.dateFrom()
-                                 .format(dateFormatter),
-                          topPair.dateTo()
-                                 .format(dateFormatter),
-                          topPair.daysWorkedTogether(),
-                          topPair.daysWorkedTogether() == 1 ? "day" : "days");
 
-        System.out.println(">>> All Employee Pairs:");
-        System.out.printf("%-15s %-15s %-15s %-15s %-15s %-10s%n", "Employee 1", "Employee 2", "Project ID",
-                          "Date From", "Date To", "Days");
+        return results
+                .stream()
+                .filter(r -> topPairFilter(r, id1, id2))
+                .toList();
+    }
 
-        for (TimeWorked tw : results)
-        {
-            System.out.printf("%-15d %-15d %-15d %-15s %-15s %-10d%n",
-                              tw.firstEmployeeId(),
-                              tw.secondEmployeeId(),
-                              tw.projectId(),
-                              tw.dateFrom()
-                                .format(dateFormatter),
-                              tw.dateTo()
-                                .format(dateFormatter),
-                              tw.daysWorkedTogether());
-        }
-
-        System.out.println();
+    private boolean topPairFilter(final TimeWorked tw, Long id1, Long id2)
+    {
+        return (Objects.equals(tw.firstEmployeeId(), id1) && Objects.equals(tw.secondEmployeeId(), id2))
+                || (Objects.equals(tw.firstEmployeeId(), id2) && Objects.equals(tw.secondEmployeeId(), id1));
     }
 
 }
