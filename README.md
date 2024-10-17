@@ -1,7 +1,7 @@
 # Employee Pairs
 
 1. **Server** - built using Java and Spring Boot.
-2. **Client** - built using Angular for a simple, user-friendly interface.
+2. **Client** - built using Angular 
 
 ---
 
