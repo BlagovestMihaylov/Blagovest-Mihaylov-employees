@@ -1,8 +1,5 @@
 # Employee Pairs
 
-## Overview
-This application identifies employee pairs who worked together the most, both across all projects and on specific ones. It consists of two main parts:
-
 1. **Server** - built using Java and Spring Boot.
 2. **Client** - built using Angular for a simple, user-friendly interface.
 
@@ -11,7 +8,6 @@ This application identifies employee pairs who worked together the most, both ac
 ## How It Works
 
 ### Server Side - Java (Spring Boot)
-The backend of the application performs the following key tasks:
 
 #### 1. On Application Startup:
    - Reads all the files in the `project_data` folder.
@@ -24,18 +20,17 @@ The backend of the application performs the following key tasks:
 #### 2. API Endpoint:
    - Exposes a single endpoint that:
      - Accepts a CSV file upload.
-     - Returns the employee pair that worked together the most, along with details of all the projects they worked on and the time periods.
+     - Returns the employee pair that worked together the most, along with details of all the projects they worked on and the periods.
 
 ---
 
 ### Client Side - Angular
-The frontend provides a simple interface with the following features:
 
 #### 1. File Upload:
-   - Allows users to select a CSV file to upload for pair calculation.
+   - Allows to select a CSV file to upload for pair calculation.
 
 #### 2. Data Display:
-   - Displays the calculated results in a **datagrid** format for easy viewing of employee pairs and project details.
+   - Displays the calculated results in a **datagrid** format 
 
 ---
 
