@@ -14,11 +14,11 @@ public class EmployeeTimeOverlapCalculator
     // Event class to represent a start or end of an employee's work period
     private static class Event
     {
-        Integer employeeId;
+        Long employeeId;
         LocalDate date;
         boolean isStart; // true for start, false for end
 
-        Event(Integer employeeId, LocalDate date, boolean isStart)
+        Event(Long employeeId, LocalDate date, boolean isStart)
         {
             this.employeeId = employeeId;
             this.date = date;
@@ -59,8 +59,8 @@ public class EmployeeTimeOverlapCalculator
     {
         List<TimeWorked> result = new ArrayList<>();
         Set<String> processedPairs = new HashSet<>(); // Set to track processed pairs
-        Map<Integer, List<Integer>> activeEmployeesByProject = new HashMap<>();
-        Map<Integer, CSVRow> rowMap = new HashMap<>();
+        Map<Long, List<Long>> activeEmployeesByProject = new HashMap<>();
+        Map<Long, CSVRow> rowMap = new HashMap<>();
 
         for (CSVRow row : rows)
         {
@@ -77,9 +77,9 @@ public class EmployeeTimeOverlapCalculator
                         .computeIfAbsent(currentRow.projectId(), _ -> new ArrayList<>())
                         .add(event.employeeId);
 
-                List<Integer> activeEmployees = activeEmployeesByProject.get(currentRow.projectId());
+                List<Long> activeEmployees = activeEmployeesByProject.get(currentRow.projectId());
 
-                for (Integer activeEmployeeId : activeEmployees)
+                for (Long activeEmployeeId : activeEmployees)
                 {
                     if (!activeEmployeeId.equals(event.employeeId))
                     {
@@ -112,7 +112,7 @@ public class EmployeeTimeOverlapCalculator
             } else
             {
                 // On end event, remove the employee from their project's active set
-                List<Integer> activeEmployees = activeEmployeesByProject.get(currentRow.projectId());
+                List<Long> activeEmployees = activeEmployeesByProject.get(currentRow.projectId());
                 if (activeEmployees != null)
                 {
                     activeEmployees.remove(event.employeeId);
@@ -126,7 +126,7 @@ public class EmployeeTimeOverlapCalculator
         return result;
     }
 
-    private String createPairKey(Integer id1, Integer id2)
+    private String createPairKey(Long id1, Long id2)
     {
         return id1 < id2 ? id1 + "-" + id2 : id2 + "-" + id1;
     }

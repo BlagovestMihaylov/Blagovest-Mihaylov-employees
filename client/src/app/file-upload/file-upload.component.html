@@ -1,0 +1,46 @@
+<mat-card class="file-upload-card">
+  <mat-card-header>
+    <mat-card-title>Upload CSV File</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <input type="file" (change)="onFileSelected($event)" class="file-input" />
+    <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="!selectedFile">
+      Upload
+    </button>
+  </mat-card-content>
+</mat-card>
+
+<mat-card class="table-card" *ngIf="timeWorkedList.length > 0">
+  <mat-card-header>
+    <mat-card-title>Project Details</mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <table mat-table [dataSource]="timeWorkedList" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="firstEmployeeId">
+        <th mat-header-cell *matHeaderCellDef> Employee ID #1 </th>
+        <td mat-cell *matCellDef="let element"> {{element.firstEmployeeId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="secondEmployeeId">
+        <th mat-header-cell *matHeaderCellDef> Employee ID #2 </th>
+        <td mat-cell *matCellDef="let element"> {{element.secondEmployeeId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="projectId">
+        <th mat-header-cell *matHeaderCellDef> Project ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.projectId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="daysWorkedTogether">
+        <th mat-header-cell *matHeaderCellDef> Days Worked </th>
+        <td mat-cell *matCellDef="let element"> {{element.daysWorkedTogether}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>

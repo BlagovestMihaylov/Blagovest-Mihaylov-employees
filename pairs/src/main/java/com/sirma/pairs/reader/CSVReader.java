@@ -3,10 +3,9 @@ package com.sirma.pairs.reader;
 import com.sirma.pairs.parser.CSVParser;
 import com.sirma.pairs.parser.CSVRow;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +21,45 @@ public class CSVReader
     }
 
 
+    public List<CSVRow> readFile(MultipartFile file)
+    {
+
+        try
+        {
+            BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream()));
+            return getCsvRows(br);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public List<CSVRow> readFile(String filePath)
+    {
+
+        try
+        {
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+
+            return getCsvRows(br);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private List<CSVRow> getCsvRows(BufferedReader br)
+    throws IOException
     {
         List<CSVRow> rows = new ArrayList<>();
         String line;
         String delimiter = ",";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath)))
-        {
-            br.readLine();  // Skip the first line
+         br.readLine();  // Skip the first line
 
             while ((line = br.readLine()) != null)
             {
@@ -39,11 +68,6 @@ public class CSVReader
                 rows.add(row);
             }
 
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
 
         return rows;
     }

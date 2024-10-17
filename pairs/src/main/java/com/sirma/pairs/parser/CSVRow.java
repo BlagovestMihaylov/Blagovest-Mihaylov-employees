@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 public record CSVRow
         (
-                Integer employeeId,
-                Integer projectId,
+                Long employeeId,
+                Long projectId,
                 LocalDate dateFrom,
                 LocalDate dateTo
         )

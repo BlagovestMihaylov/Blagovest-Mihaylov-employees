@@ -1,0 +1,30 @@
+.file-upload-card {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.file-input {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.table-card {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.mat-header-cell, .mat-cell {
+  padding: 10px;
+  text-align: center;
+}
+
+.mat-header-cell {
+  font-weight: bold;
+}
+
+button {
+  margin-right: 10px;
+  margin-top: 10px;
+}

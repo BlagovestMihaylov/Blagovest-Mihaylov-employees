@@ -4,9 +4,9 @@ import java.time.LocalDate;
 
 public record TimeWorked
         (
-                Integer firstEmployeeId,
-                Integer secondEmployeeId,
-                Integer projectId,
+                Long firstEmployeeId,
+                Long secondEmployeeId,
+                Long projectId,
                 LocalDate dateFrom,
                 LocalDate dateTo,
                 int daysWorkedTogether
