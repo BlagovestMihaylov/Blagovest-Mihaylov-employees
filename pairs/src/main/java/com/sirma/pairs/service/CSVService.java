@@ -10,11 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -36,7 +33,8 @@ public class CSVService
     {
         final List<CSVRow> rows = reader.readFile(file);
 
-        final List<TimeWorked> results = employeeTimeOverlapCalculator.getTimeWorkedSortedByDuration(rows);
+        final List<TimeWorked> results = employeeTimeOverlapCalculator.calculateTheMostTimeWorkedTogetherOnOneProject(
+                rows);
 
         return filterTopPairCommonProjects(results);
     }
@@ -51,9 +49,28 @@ public class CSVService
         {
             final List<CSVRow> rows = reader.readFile(fn);
 
-            final List<TimeWorked> results = employeeTimeOverlapCalculator.getTimeWorkedSortedByDuration(rows);
+            final List<TimeWorked> results = employeeTimeOverlapCalculator.calculateTheMostTimeWorkedTogetherOnOneProject(
+                    rows);
 
-            PrintUtils.printResults(results, fn);
+            final Optional<TimeWorked> mostTimeTogetherPairOpt = employeeTimeOverlapCalculator.calculateTheMostTimeWorkedTogetherOverall(
+                    rows);
+
+            if (mostTimeTogetherPairOpt.isEmpty())
+            {
+                PrintUtils.printEmpty();
+                continue;
+            }
+
+            final TimeWorked mostTimeTogetherPair = mostTimeTogetherPairOpt.get();
+
+            final Set<Long> commonProjects = results.stream()
+                                                    .filter(r -> topPairFilter(r,
+                                                                               mostTimeTogetherPair.firstEmployeeId(),
+                                                                               mostTimeTogetherPair.secondEmployeeId()))
+                                                    .map(TimeWorked::projectId)
+                                                    .collect(Collectors.toSet());
+
+            PrintUtils.printResults(results, fn, mostTimeTogetherPair, commonProjects);
         }
     }
 
@@ -85,9 +102,9 @@ public class CSVService
         }
 
         final Long id1 = topPairOpt.get()
-                                      .firstEmployeeId();
+                                   .firstEmployeeId();
         final Long id2 = topPairOpt.get()
-                                      .secondEmployeeId();
+                                   .secondEmployeeId();
 
 
         return results

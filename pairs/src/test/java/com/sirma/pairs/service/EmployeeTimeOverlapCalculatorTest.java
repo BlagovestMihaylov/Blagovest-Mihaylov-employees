@@ -46,7 +46,7 @@ class EmployeeTimeOverlapCalculatorTest
     }
 
     @Test
-    void getTimeWorkedSortedByDuration()
+    void calculateTheMostTimeWorkedTogetherOnOneProject()
     {
         List<CSVRow> rows = List.of(
                 new CSVRow(253L, 15L, LocalDate.of(2017, 9, 17), LocalDate.of(2021, 8, 31)), // Employee 1
@@ -56,7 +56,7 @@ class EmployeeTimeOverlapCalculatorTest
                 new CSVRow(177L, 19L, LocalDate.of(2022, 7, 6), LocalDate.of(2023, 1, 1))  // Employee 6
         );
 
-        List<TimeWorked> sortedTimeWorked = calculator.getTimeWorkedSortedByDuration(rows);
+        List<TimeWorked> sortedTimeWorked = calculator.calculateTheMostTimeWorkedTogetherOnOneProject(rows);
 
         assertNotNull(sortedTimeWorked);
         assertFalse(sortedTimeWorked.isEmpty());

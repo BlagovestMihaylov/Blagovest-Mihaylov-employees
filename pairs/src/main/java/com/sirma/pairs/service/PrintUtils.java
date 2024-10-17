@@ -3,10 +3,20 @@ package com.sirma.pairs.service;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class PrintUtils
 {
-    public static void printResults(List<TimeWorked> results, String filename)
+
+    public static void printEmpty()
+    {
+        System.out.println("No employee pairs found.");
+    }
+
+    public static void printResults(final List<TimeWorked> results,
+                                    final String filename,
+                                    final TimeWorked mostWorkedTogetherPair,
+                                    final Set<Long> commonProjects)
     {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -17,13 +27,22 @@ public class PrintUtils
 
         if (topPairOpt.isEmpty())
         {
-            System.out.println("No employee pairs found.");
+            printEmpty();
             return;
         }
 
         final TimeWorked topPair = topPairOpt.get();
 
-        System.out.println(">>> Pair That Worked Together the Most:");
+        System.out.printf(
+                ">>> Pair That Worked Together the Most: %d and %d on projects %s for an overall of %d %s.%n%n",
+                mostWorkedTogetherPair.firstEmployeeId(),
+                mostWorkedTogetherPair.secondEmployeeId(),
+                commonProjects.toString(),
+                mostWorkedTogetherPair.daysWorkedTogether(),
+                mostWorkedTogetherPair.daysWorkedTogether() == 1 ? "day" : "days");
+
+
+        System.out.println(">>> Pair That Worked Together on a single project the Most:");
         System.out.printf("Employee %d worked with employee %d on project %d from %s to %s for %d %s.%n%n",
                           topPair.firstEmployeeId(),
                           topPair.secondEmployeeId(),
