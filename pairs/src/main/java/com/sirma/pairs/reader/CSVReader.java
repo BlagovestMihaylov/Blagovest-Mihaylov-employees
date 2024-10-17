@@ -1,4 +1,4 @@
-package com.sirma.pairs.csv;
+package com.sirma.pairs.reader;
 
 import java.util.List;
 
