@@ -1,4 +1,4 @@
-package com.sirma.pairs.reader;
+package com.sirma.pairs.parser;
 
 import java.time.LocalDate;
 
